@@ -11,21 +11,9 @@ venv:
 install: venv
 	@poetry install
 
-# ...
-client:
-	@poetry run python3 -m src.KVStorage.client
-
-# ...
-server:
-	@poetry run python3 -m src.KVStorage.server $(filter-out $@,$(MAKECMDGOALS))
-
-# ...
-console:
-	@poetry run python3 -m src.KVStorage.console
-
 # Run local tests
 test:
-	@poetry run python3 -m tests.test_start
+	@echo "Is not supported"
 
 # Check project files with formatter and linter
 check: format lint
