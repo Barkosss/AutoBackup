@@ -7,7 +7,17 @@ import pkgutil
 from commands.base_command import BaseCommand
 from dotenv import load_dotenv
 from telegram import Update
-from telegram.ext import Application, CommandHandler, ContextTypes
+from telegram.ext import (
+    Application,
+    CommandHandler,
+    ContextTypes,
+    ConversationHandler,
+    MessageHandler,
+    filters,
+)
+
+from commands.help import HelpCommand
+from commands.remove_backup import RemoveBackupCommand
 
 # Enable logging
 logging.basicConfig(
@@ -17,6 +27,8 @@ logging.basicConfig(
 logging.getLogger("httpx").setLevel(logging.WARNING)
 
 logger = logging.getLogger(__name__)
+
+WAITING_FOR_INPUT = 1
 
 
 def discovery_commands(package_name: str) -> list[BaseCommand]:
@@ -31,6 +43,24 @@ def discovery_commands(package_name: str) -> list[BaseCommand]:
                 commands.append(obj())
 
     return commands
+
+
+async def text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    assert update.message is not None
+    assert update.message.text is not None
+    await RemoveBackupCommand.remove(update=update, backup_name=update.message.text)
+    return ConversationHandler.END
+
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await HelpCommand().execute(update=update, context=context)
+
+
+async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    assert update.message is not None
+
+    await update.message.reply_text("Action is cancel")
+    return ConversationHandler.END
 
 
 def main() -> None:
@@ -49,6 +79,16 @@ def main() -> None:
             await cmd.execute(update, context)
 
         application.add_handler(CommandHandler(command.get_name(), handler))
+
+    conv_handler = ConversationHandler(
+        entry_points=[CommandHandler("start", start)],
+        states={
+            WAITING_FOR_INPUT: [MessageHandler(filters.TEXT & ~filters.COMMAND, text)]
+        },
+        fallbacks=[CommandHandler("cancel", cancel)],
+    )
+
+    application.add_handler(conv_handler)
 
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
