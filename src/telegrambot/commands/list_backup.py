@@ -1,6 +1,7 @@
 import os
 
 from telegram import Update
+from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
 
 from .base_command import BaseCommand
@@ -16,14 +17,14 @@ class ListBackupCommand(BaseCommand):
     async def execute(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         assert update.message is not None
 
-        backups: list[str] = self._get_backups()
-        message: str = "====== LIST ======\n\n"
+        backups: list[str] = self.get_backups()
+        message: str = "\\=\\=\\=\\=\\=\\= LIST \\=\\=\\=\\=\\=\\=\n\n"
         for index, file_name in enumerate(backups):
-            message += f"{index + 1}. {file_name}\n"
-        await update.message.reply_text(message)
+            message += f"{index + 1}\\. `{file_name}`\n"
+        await update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN_V2)
 
     @staticmethod
-    def _get_backups() -> list[str]:
+    def get_backups() -> list[str]:
         backups: list[str] = []
         with os.scandir(os.getenv("BACKUP_DIRECTORY")) as entries:
             for entry in entries:
