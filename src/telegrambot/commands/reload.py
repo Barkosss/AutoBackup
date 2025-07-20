@@ -10,7 +10,7 @@ class ReloadCommand(BaseCommand):
         return "reload"
 
     def get_description(self) -> str:
-        return ""
+        return "Reload env config"
 
     async def execute(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         assert update.message is not None
