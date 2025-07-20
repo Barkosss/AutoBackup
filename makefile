@@ -12,7 +12,7 @@ install: venv
 	@poetry install
 
 telegram:
-	@python3 src/telegram/main.py
+	@python3 src/telegrambot/main.py
 
 # Run local tests
 test:
