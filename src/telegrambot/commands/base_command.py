@@ -14,6 +14,14 @@ class BaseCommand(ABC):
         pass
 
     @abstractmethod
+    def get_description(self) -> str:
+        """
+
+        :return: str - description of command
+        """
+        pass
+
+    @abstractmethod
     async def execute(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """
 
