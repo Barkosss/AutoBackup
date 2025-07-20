@@ -11,6 +11,9 @@ venv:
 install: venv
 	@poetry install
 
+telegram:
+	@python3 src/telegram/main.py
+
 # Run local tests
 test:
 	@echo "Is not supported"
