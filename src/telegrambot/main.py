@@ -5,6 +5,8 @@ import os
 import pkgutil
 
 from commands.base_command import BaseCommand
+from commands.help import HelpCommand
+from commands.remove_backup import RemoveBackupCommand
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import (
@@ -15,9 +17,6 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
-
-from commands.help import HelpCommand
-from commands.remove_backup import RemoveBackupCommand
 
 # Enable logging
 logging.basicConfig(
@@ -70,25 +69,31 @@ def main() -> None:
     application = Application.builder().token(token).build()
     commands: list[BaseCommand] = discovery_commands("commands")
     for command in commands:
+        if isinstance(command, RemoveBackupCommand):
+            conv_handler = ConversationHandler(
+                entry_points=[
+                    CommandHandler(
+                        command.get_name(), lambda u, c: command.execute(u, c)
+                    )
+                ],
+                states={
+                    WAITING_FOR_INPUT: [
+                        MessageHandler(filters.TEXT & ~filters.COMMAND, text)
+                    ],
+                },
+                fallbacks=[CommandHandler("cancel", cancel)],
+            )
+            application.add_handler(conv_handler)
+        else:
 
-        async def handler(
-            update: Update,
-            context: ContextTypes.DEFAULT_TYPE,
-            cmd: BaseCommand = command,
-        ) -> None:
-            await cmd.execute(update, context)
+            async def handler(
+                update: Update,
+                context: ContextTypes.DEFAULT_TYPE,
+                cmd: BaseCommand = command,
+            ) -> None:
+                await cmd.execute(update, context)
 
-        application.add_handler(CommandHandler(command.get_name(), handler))
-
-    conv_handler = ConversationHandler(
-        entry_points=[CommandHandler("start", start)],
-        states={
-            WAITING_FOR_INPUT: [MessageHandler(filters.TEXT & ~filters.COMMAND, text)]
-        },
-        fallbacks=[CommandHandler("cancel", cancel)],
-    )
-
-    application.add_handler(conv_handler)
+            application.add_handler(CommandHandler(command.get_name(), handler))
 
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
