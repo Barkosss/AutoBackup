@@ -33,15 +33,17 @@ class RemoveBackupCommand(BaseCommand):
         backup_name = backup_name.lower()
         backups: list[str] = ListBackupCommand.get_backups()
 
-        if not(backup_name.endswith(".zip")):
+        if not (backup_name.endswith(".zip")):
             backup_name += ".zip"
 
         # If backup name is not found is backups list
-        if not(backup_name in backups):
-            await update.message.reply_text(f"Backup \"{backup_name}\" not found. Enter backup's name again")
+        if not (backup_name in backups):
+            await update.message.reply_text(
+                f'Backup "{backup_name}" not found. Enter backup\'s name again'
+            )
             return WAITING_FOR_INPUT
 
-        backup: Path = Path(os.getenv("BACKUP_DIRECTORY") + '/' + backup_name)
+        backup: Path = Path(os.getenv("BACKUP_DIRECTORY") + "/" + backup_name)
         backup.unlink()
-        await update.message.reply_text(f"Backup \"{backup_name}\" is remove")
+        await update.message.reply_text(f'Backup "{backup_name}" is remove')
         return ConversationHandler.END
