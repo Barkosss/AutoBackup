@@ -1,0 +1,25 @@
+{
+    "schemaVersion": 1,
+    "id": "autobackupmod",
+    "version": "${version}",
+    "name": "AutoBackupMod",
+    "description": "",
+    "authors": [],
+    "contact": {},
+    "license": "All-Rights-Reserved",
+    "icon": "assets/autobackupmod/icon.png",
+    "environment": "server",
+    "entrypoints": {
+        "main": [
+            "com.github.barkosss.autobackupmod.AutoBackupMod"
+        ]
+    },
+    "mixins": [
+        "autobackupmod.mixins.json"
+    ],
+    "depends": {
+        "fabricloader": ">=${loader_version}",
+        "fabric": "*",
+        "minecraft": "${minecraft_version}"
+    }
+}

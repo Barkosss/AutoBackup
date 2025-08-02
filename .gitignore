@@ -1,3 +1,6 @@
+MinecraftServer
+src/resources/backups
+
 .idea
 
 # Byte-compiled / optimized / DLL files

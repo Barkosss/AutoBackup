@@ -4,9 +4,6 @@ import logging
 import os
 import pkgutil
 
-from commands.base_command import BaseCommand
-from commands.help import HelpCommand
-from commands.remove_backup import RemoveBackupCommand
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import (
@@ -17,6 +14,10 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
+
+from commands.base_command import BaseCommand
+from commands.help import HelpCommand
+from commands.remove_backup import RemoveBackupCommand
 
 # Enable logging
 logging.basicConfig(
@@ -87,9 +88,9 @@ def main() -> None:
         else:
 
             async def handler(
-                update: Update,
-                context: ContextTypes.DEFAULT_TYPE,
-                cmd: BaseCommand = command,
+                    update: Update,
+                    context: ContextTypes.DEFAULT_TYPE,
+                    cmd: BaseCommand = command,
             ) -> None:
                 await cmd.execute(update, context)
 
