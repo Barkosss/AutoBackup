@@ -28,6 +28,9 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     implementation "org.reflections:reflections:0.10.2" // Reflections (Для получения классов с пакетов)
+    implementation "org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0"
+    implementation "org.apache.logging.log4j:log4j-core:2.20.0"
+    implementation "org.apache.logging.log4j:log4j-api:2.20.0"
 }
 
 processResources {

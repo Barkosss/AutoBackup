@@ -2,6 +2,7 @@ package com.github.barkosss.autobackupmod.commands;
 
 import com.github.barkosss.autobackupmod.AutoBackupMod;
 import com.github.barkosss.autobackupmod.enums.HttpMethods;
+import com.github.barkosss.autobackupmod.util.Logger;
 import com.github.barkosss.autobackupmod.util.TaskScheduler;
 import net.minecraft.entity.boss.BossBar;
 import net.minecraft.entity.boss.ServerBossBar;
@@ -31,7 +32,7 @@ public class CreateBackupCommand implements BaseCommand {
 
     @Override
     public void execute(Map<String, String> query) {
-        System.out.println("Create backup");
+        Logger.debug("Create backup");
 
         MinecraftServer server = AutoBackupMod.instanceServer;
         List<ServerPlayerEntity> players = server.getPlayerManager().getPlayerList();
@@ -44,7 +45,7 @@ public class CreateBackupCommand implements BaseCommand {
         bossBar.setPercent(1.0f);
         bossBar.setVisible(true);
 
-        server.sendMessage(Text.literal("/say Сервер через минуту будет закрыт для создания бэкапа!"));
+        server.(Text.literal("Сервер через минуту будет закрыт для создания бэкапа!"));
 
         for (ServerPlayerEntity player : players) {
             bossBar.addPlayer(player);
