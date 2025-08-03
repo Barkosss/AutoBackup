@@ -14,9 +14,6 @@
             "com.github.barkosss.autobackupmod.AutoBackupMod"
         ]
     },
-    "mixins": [
-        "autobackupmod.mixins.json"
-    ],
     "depends": {
         "fabricloader": ">=${loader_version}",
         "fabric": "*",

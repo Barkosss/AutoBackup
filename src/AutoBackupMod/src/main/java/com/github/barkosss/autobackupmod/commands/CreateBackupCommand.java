@@ -4,12 +4,11 @@ import com.github.barkosss.autobackupmod.AutoBackupMod;
 import com.github.barkosss.autobackupmod.enums.HttpMethods;
 import com.github.barkosss.autobackupmod.util.Logger;
 import com.github.barkosss.autobackupmod.util.TaskScheduler;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.boss.BossBar;
 import net.minecraft.entity.boss.ServerBossBar;
-import net.minecraft.network.message.SignedMessage;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.network.message.SentMessage;
 import net.minecraft.text.Text;
 
 import java.util.List;
@@ -32,6 +31,7 @@ public class CreateBackupCommand implements BaseCommand {
 
     @Override
     public void execute(Map<String, String> query) {
+        register();
         Logger.debug("Create backup");
 
         MinecraftServer server = AutoBackupMod.instanceServer;
@@ -45,16 +45,26 @@ public class CreateBackupCommand implements BaseCommand {
         bossBar.setPercent(1.0f);
         bossBar.setVisible(true);
 
-        server.(Text.literal("Сервер через минуту будет закрыт для создания бэкапа!"));
-
+        Text text = Text.literal("Сервер через минуту будет закрыт для создания бэкапа!");
         for (ServerPlayerEntity player : players) {
             bossBar.addPlayer(player);
-            player.sendChatMessage(, true);
+            player.sendMessage(text, true);
 
             TaskScheduler.schedule(() -> {
                 bossBar.removePlayer(player);
-                // ...
+                player.networkHandler.disconnect(Text.literal("Сервер выключается для перезапуска"));
             }, 1200); // 1 минута
         }
+    }
+
+    private void register() {
+        ServerPlayConnectionEvents.DISCONNECT.register(((handler, server) -> {
+            if (!server.getPlayerManager().getPlayerList().isEmpty()) {
+                return;
+            }
+
+            Logger.info("Server is stop");
+            server.stop(true);
+        }));
     }
 }
