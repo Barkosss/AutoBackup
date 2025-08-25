@@ -14,5 +14,5 @@ class ReloadCommand(BaseCommand):
 
     async def execute(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         assert update.message is not None
-        load_dotenv()
+        load_dotenv(override=True)
         await update.message.reply_text("Env is reload!")
